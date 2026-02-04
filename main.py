@@ -1,5 +1,6 @@
 import products
 import store
+import pytest
 
 # setup initial stock of inventory
 product_list = [

@@ -1,9 +1,16 @@
 class Product:
     def __init__(self, name, price, quantity):
+        if not name or name.strip() == "":
+            raise ValueError("Product name cannot be empty")
+        if price < 0:
+            raise ValueError("Price cannot be negative")
+        if quantity < 0:
+            raise ValueError("Quantity cannot be negative")
+
         self.name = name
         self.price = price
         self.quantity = quantity
-        self.active = True
+        self.active = quantity > 0
 
     def get_quantity(self) -> int:
         """Returns the current quantity of the product in stock."""
