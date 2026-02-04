@@ -53,5 +53,46 @@ class Product:
             return amount * self.price
         else:
             raise ValueError("Not enough quantity in stock")
-    
+
+
+class NonStockedProduct(Product):
+    """Digital product without inventory management."""
+
+    def __init__(self, name, price):
+        super().__init__(name, price, quantity=0)
+        self.activate()
+
+    def buy(self, amount):
+        """Processes purchase without quantity checks or reduction."""
+        return amount * self.price
+
+    def set_quantity(self, quantity):
+        """Prevents quantity changes for non-stocked products."""
+        if quantity != 0:
+            raise ValueError("Cannot set quantity for non-stocked products")
+
+    def show(self):
+        """Displays product details with non-physical indicator."""
+        super().show()
+        print("Non-physical product!")
+
+
+class LimitedProduct(Product):
+    """Product with maximum purchase limit per order."""
+
+    def __init__(self, name, price, quantity, max_per_order):
+        super().__init__(name, price, quantity)
+        self.max_per_order = max_per_order
+
+    def buy(self, amount):
+        """Processes purchase with per-order limit check."""
+        if amount > self.max_per_order:
+            raise ValueError(f"Cannot purchase more than {self.max_per_order} of this product per order")
+        return super().buy(amount)
+
+    def show(self):
+        """Displays product details with order limit indicator."""
+        super().show()
+        print(f"Limited to {self.max_per_order} per order!")
+
 

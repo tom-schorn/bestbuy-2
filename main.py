@@ -6,7 +6,9 @@ import pytest
 product_list = [
     products.Product("MacBook Air M2", price=1450, quantity=100),
     products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-    products.Product("Google Pixel 7", price=500, quantity=250)
+    products.Product("Google Pixel 7", price=500, quantity=250),
+    products.NonStockedProduct("Windows License", price=125),
+    products.LimitedProduct("Shipping", price=10, quantity=250, max_per_order=1)
 ]
 best_buy = store.Store(product_list)
 
@@ -65,10 +67,6 @@ def make_order(store_object):
 
             if amount <= 0:
                 print("Invalid amount. Please enter a positive number.")
-                continue
-
-            if amount > product.quantity:
-                print(f"Insufficient quantity of {product.name} in stock.")
                 continue
 
             shopping_list.append((product, amount))
