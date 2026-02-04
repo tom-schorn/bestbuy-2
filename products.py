@@ -11,6 +11,7 @@ class Product:
         self.price = price
         self.quantity = quantity
         self.active = quantity > 0
+        self.promotion = None
 
     def get_quantity(self) -> int:
         """Returns the current quantity of the product in stock."""
@@ -38,10 +39,22 @@ class Product:
         """Deactivates the product."""
         self.active = False
 
+    def get_promotion(self):
+        """Returns the promotion associated with the product."""
+        return self.promotion
+
+    def set_promotion(self, promotion):
+        """Sets the promotion for the product."""
+        self.promotion = promotion
+
+    def remove_promotion(self):
+        """Removes the promotion from the product."""
+        self.promotion = None
 
     def show(self):
-        """Displays the product details.""" 
-        print(f"{self.name}, Price: {self.price} €, Quantity: {self.quantity}, Active: {self.active}")
+        """Displays the product details."""
+        promo_info = f", Promotion: {self.promotion.name}" if self.promotion else ""
+        print(f"{self.name}, Price: {self.price} €, Quantity: {self.quantity}, Active: {self.active}{promo_info}")
 
 
     def buy(self, amount):
@@ -50,7 +63,11 @@ class Product:
             self.quantity -= amount
             if self.quantity == 0:
                 self.deactivate()
-            return amount * self.price
+
+            if self.promotion:
+                return self.promotion.apply_promotion(self, amount)
+            else:
+                return amount * self.price
         else:
             raise ValueError("Not enough quantity in stock")
 
@@ -64,7 +81,10 @@ class NonStockedProduct(Product):
 
     def buy(self, amount):
         """Processes purchase without quantity checks or reduction."""
-        return amount * self.price
+        if self.promotion:
+            return self.promotion.apply_promotion(self, amount)
+        else:
+            return amount * self.price
 
     def set_quantity(self, quantity):
         """Prevents quantity changes for non-stocked products."""
@@ -80,19 +100,19 @@ class NonStockedProduct(Product):
 class LimitedProduct(Product):
     """Product with maximum purchase limit per order."""
 
-    def __init__(self, name, price, quantity, max_per_order):
+    def __init__(self, name, price, quantity, maximum):
         super().__init__(name, price, quantity)
-        self.max_per_order = max_per_order
+        self.maximum = maximum
 
     def buy(self, amount):
         """Processes purchase with per-order limit check."""
-        if amount > self.max_per_order:
-            raise ValueError(f"Cannot purchase more than {self.max_per_order} of this product per order")
+        if amount > self.maximum:
+            raise ValueError(f"Cannot purchase more than {self.maximum} of this product per order")
         return super().buy(amount)
 
     def show(self):
         """Displays product details with order limit indicator."""
         super().show()
-        print(f"Limited to {self.max_per_order} per order!")
+        print(f"Limited to {self.maximum} per order!")
 
 
