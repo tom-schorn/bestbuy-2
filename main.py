@@ -40,7 +40,10 @@ def list_products(store_object):
     active_products = store_object.get_all_products()
     print("-" * 40)
     for index, product in enumerate(active_products, start=1):
-        print(f"{index}. {product.name}, Price: {product.price} €, Quantity: {product.quantity}")
+        qty_str = "Unlimited" if isinstance(product, products.NonStockedProduct) else str(product.quantity)
+        promo_str = f", Promotion: {product.promotion.name}" if product.promotion else ""
+        limit_str = f", Limited to {product.maximum} per order" if isinstance(product, products.LimitedProduct) else ""
+        print(f"{index}. {product.name}, Price: {product.price} €, Quantity: {qty_str}{promo_str}{limit_str}")
     print("-" * 40)
     return active_products
 

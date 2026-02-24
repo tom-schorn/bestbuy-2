@@ -27,13 +27,14 @@ class Store:
 
     def order(self, shopping_list) -> float:
         """Processes an order given a shopping list of (product, amount) tuples."""
+        aggregated = {}
+        for prod, amount in shopping_list:
+            aggregated[prod] = aggregated.get(prod, 0) + amount
+
         total_cost = 0.0
-        for item in shopping_list:
-            prod, amount = item
+        for prod, amount in aggregated.items():
             if prod in self.products and prod.is_active():
                 total_cost += prod.buy(amount)
             else:
-                raise ValueError(
-                    f"Product {
-                        prod.name} is not available in the store.")
+                raise ValueError(f"Product {prod.name} is not available in the store.")
         return total_cost
